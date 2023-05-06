@@ -221,10 +221,7 @@ CREATE TABLE funding_rounds
     updated_at               TIMESTAMP
 );
 
--- Add constraints
--- FKs
--- ALTER TABLE emps
---     ADD CONSTRAINT fk_emps_mgr_empno FOREIGN KEY (mgr) REFERENCES emps (empno);
+-- Omit constraints for simplicity
 
 SET datestyle TO iso, ymd;
 

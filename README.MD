@@ -1,4 +1,14 @@
-This repository is a template for the final project of big data course in IU-2023. It contains the following directories:
+# Startups DA — Introduction to Big Data course project 
+
+This project is designed to run on [HDP Sandbox 2.6.5](https://hackmd.io/@firasj/BkSQJQ8eh) (cluster). It is based on [Startup Investments](data/README.MD) data.
+
+### Team
+- Vladimir Makharev
+- Artem Batalov
+
+### Repository description
+
+This repository is for the final project of big data course in IU-2023. It contains the following directories:
 
 - `data/` contains the dataset files.
 - `models/` contains the Spark ML models.

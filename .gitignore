@@ -1,0 +1,3 @@
+data/*.avsc
+data/*.java
+stable

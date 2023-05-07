@@ -10,5 +10,6 @@ hdfs dfs -mkdir /project/java
 hdfs dfs -put data/*.java /project/java
 
 echo "Build HIVE tables"
-rm -rf sql/hive_results.txt
-sudo hive -f sql/db.hql > sql/hive_results.txt
+hdfs dfs -chmod -R 777 /project
+rm -rf output/hive_results.txt
+hive -f sql/db.hql > output/hive_results.txt

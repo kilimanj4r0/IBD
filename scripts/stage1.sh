@@ -9,7 +9,7 @@ echo "Creating a sqoop job and import all table into HDFS"
 cd data
 hdfs dfs -rm -r /project
 sqoop import-all-tables \
-    -Dmapreduce.job.classloader=true \
+    -Dmapreduce.job.user.classpath.first=true \
     -Dorg.apache.sqoop.splitter.allow_text_splitter=true \
     --connect jdbc:postgresql://localhost/project \
     --username postgres \

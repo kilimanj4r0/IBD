@@ -1,4 +1,5 @@
-pylint
-pyspark
-pandas
-streamlit
+pylint==1.9.5
+pyspark==3.0.3
+pandas==0.24.2
+streamlit==0.55.2
+pathlib==1.0.1

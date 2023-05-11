@@ -1,8 +1,7 @@
 #!/bin/bash
-echo "Run Predictive Data Analysis via spark-submit"
-spark-submit --jars /usr/hdp/current/hive-client/lib/hive-metastore-1.2.1000.2.6.5.0-292.jar,/usr/hdp/current/hive-client/lib/hive-exec-1.2.1000.2.6.5.0-292.jar \
---packages org.apache.spark:spark-avro_2.12:3.0.3 \
-scripts/pda.py
+echo "Please go to Zeppelin (http://localhost:9995), import notebook by link https://raw.githubusercontent.com/kilimanj4r0/IBD/main/notebooks/pda.json and start all cells"
+
+read -p "Press enter to continue"
 
 echo "Get trained models"
 rm -rf models/*

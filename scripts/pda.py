@@ -18,8 +18,6 @@ spark = SparkSession.builder\
 
 # Feature engineering
 objects = spark.read.format("avro").option("encoding", "UTF-8").table('projectdb.objects')
-print(objects.schema)
-1/0
 objects.show(1, vertical=True)
 
 objects.select('entity_type').distinct().show()
@@ -153,89 +151,89 @@ companies_transformed.show(1, vertical=True, truncate=False)
 rmse_evaluator = RegressionEvaluator(labelCol=target_col, predictionCol="prediction", metricName="rmse")
 r2_evaluator = RegressionEvaluator(labelCol=target_col, predictionCol="prediction", metricName="r2")
 
-# # Polynomial Linear Regression
-# polyExpansion = PolynomialExpansion(degree=2, inputCol="features", outputCol="polyFeatures")
-# lr = LinearRegression(featuresCol="polyFeatures", labelCol=target_col)
+# Polynomial Linear Regression
+polyExpansion = PolynomialExpansion(degree=2, inputCol="features", outputCol="polyFeatures")
+lr = LinearRegression(featuresCol="polyFeatures", labelCol=target_col)
 
-# plr_pipeline = Pipeline(stages=[polyExpansion, lr])
-# plr_param_grid = ParamGridBuilder() \
-#     .addGrid(PolynomialExpansion.degree, [2, 3, 4]) \
-#     .addGrid(LinearRegression.elasticNetParam, [0.0, 0.5, 1]) \
-#     .build()
-# plr_cross_validator = CrossValidator(estimator=plr_pipeline,
-#                                  estimatorParamMaps=plr_param_grid,
-#                                  evaluator=RegressionEvaluator(labelCol=target_col),
-#                                  numFolds=4,
-#                                  seed=42)
-# plr_model = plr_cross_validator.fit(train_data)
-# best_plr_model = plr_model.bestModel
-# print("Best PLR params: ", best_plr_model.stages[0].getDegree(), best_plr_model.stages[1].getElasticNetParam())
+plr_pipeline = Pipeline(stages=[polyExpansion, lr])
+plr_param_grid = ParamGridBuilder() \
+    .addGrid(PolynomialExpansion.degree, [2, 3, 4]) \
+    .addGrid(LinearRegression.elasticNetParam, [0.0, 0.5, 1]) \
+    .build()
+plr_cross_validator = CrossValidator(estimator=plr_pipeline,
+                                 estimatorParamMaps=plr_param_grid,
+                                 evaluator=RegressionEvaluator(labelCol=target_col),
+                                 numFolds=4,
+                                 seed=42)
+plr_model = plr_cross_validator.fit(train_data)
+best_plr_model = plr_model.bestModel
+print("Best PLR params: ", best_plr_model.stages[0].getDegree(), best_plr_model.stages[1].getElasticNetParam())
 
-# best_plr_model.save("/root/IBD/models/plr_model")
+best_plr_model.save("/root/IBD/models/plr_model")
 
-# # Evaluate on train
-# plr_predictions = best_plr_model.transform(train_data)
-# plr_rmse = rmse_evaluator.evaluate(plr_predictions)
-# plr_r2 = r2_evaluator.evaluate(plr_predictions)
-# print("PLR RMSE on train data:", plr_rmse)
-# print("PLR R2 on train data:", plr_r2)
+# Evaluate on train
+plr_predictions = best_plr_model.transform(train_data)
+plr_rmse = rmse_evaluator.evaluate(plr_predictions)
+plr_r2 = r2_evaluator.evaluate(plr_predictions)
+print("PLR RMSE on train data:", plr_rmse)
+print("PLR R2 on train data:", plr_r2)
 
-# # Evaluate on test
-# plr_predictions = best_plr_model.transform(test_data)
-# plr_rmse = rmse_evaluator.evaluate(plr_predictions)
-# plr_r2 = r2_evaluator.evaluate(plr_predictions)
-# print("PLR RMSE on test data:", plr_rmse)
-# print("PLR R2 on test data:", plr_r2)
+# Evaluate on test
+plr_predictions = best_plr_model.transform(test_data)
+plr_rmse = rmse_evaluator.evaluate(plr_predictions)
+plr_r2 = r2_evaluator.evaluate(plr_predictions)
+print("PLR RMSE on test data:", plr_rmse)
+print("PLR R2 on test data:", plr_r2)
 
-# # Save predictions
-# plr_predictions.repartition(1)\
-#     .select("prediction", target_col)\
-#     .write\
-#     .mode("overwrite")\
-#     .format("csv")\
-#     .option("sep", ",")\
-#     .option("header","true")\
-#     .csv("/root/IBD/output/plr_predictions.csv")
+# Save predictions
+plr_predictions.repartition(1)\
+    .select("prediction", target_col)\
+    .write\
+    .mode("overwrite")\
+    .format("csv")\
+    .option("sep", ",")\
+    .option("header","true")\
+    .csv("/root/IBD/output/plr_predictions.csv")
 
 
-# # Decision Tree Regressor
-# dt = DecisionTreeRegressor(featuresCol="features", labelCol=target_col, maxBins=128)
+# Decision Tree Regressor
+dt = DecisionTreeRegressor(featuresCol="features", labelCol=target_col, maxBins=128)
 
-# dt_param_grid = ParamGridBuilder() \
-#     .addGrid(dt.maxDepth, [15, 30]) \
-#     .addGrid(dt.minInstancesPerNode, [1, 10]) \
-#     .build()
-# dt_cross_validator = CrossValidator(estimator=dt,
-#                           estimatorParamMaps=dt_param_grid,
-#                           evaluator=RegressionEvaluator(labelCol=target_col),
-#                           numFolds=4,
-#                           seed=42)
-# dt_model = dt_cross_validator.fit(train_data)
-# best_dt_model = dt_model.bestModel
-# print("Best DT params: ", best_dt_model.getMaxDepth(), best_dt_model.getMinInstancesPerNode())
+dt_param_grid = ParamGridBuilder() \
+    .addGrid(dt.maxDepth, [15, 30]) \
+    .addGrid(dt.minInstancesPerNode, [1, 10]) \
+    .build()
+dt_cross_validator = CrossValidator(estimator=dt,
+                          estimatorParamMaps=dt_param_grid,
+                          evaluator=RegressionEvaluator(labelCol=target_col),
+                          numFolds=4,
+                          seed=42)
+dt_model = dt_cross_validator.fit(train_data)
+best_dt_model = dt_model.bestModel
+print("Best DT params: ", best_dt_model.getMaxDepth(), best_dt_model.getMinInstancesPerNode())
 
-# best_dt_model.save("/root/IBD/models/dt_model")
+best_dt_model.save("/root/IBD/models/dt_model")
 
-# # Evaluate on train
-# dt_predictions = best_dt_model.transform(train_data)
-# dt_rmse = rmse_evaluator.evaluate(dt_predictions)
-# dt_r2 = r2_evaluator.evaluate(dt_predictions)
-# print("DT RMSE on train data:", dt_rmse)
-# print("DT R2 on train data:", dt_r2)
+# Evaluate on train
+dt_predictions = best_dt_model.transform(train_data)
+dt_rmse = rmse_evaluator.evaluate(dt_predictions)
+dt_r2 = r2_evaluator.evaluate(dt_predictions)
+print("DT RMSE on train data:", dt_rmse)
+print("DT R2 on train data:", dt_r2)
 
-# # Evaluate on test
-# dt_predictions = best_dt_model.transform(test_data)
-# dt_rmse = rmse_evaluator.evaluate(dt_predictions)
-# dt_r2 = r2_evaluator.evaluate(dt_predictions)
-# print("DT RMSE on test data:", dt_rmse)
-# print("DT R2 on test data:", dt_r2)
+# Evaluate on test
+dt_predictions = best_dt_model.transform(test_data)
+dt_rmse = rmse_evaluator.evaluate(dt_predictions)
+dt_r2 = r2_evaluator.evaluate(dt_predictions)
+print("DT RMSE on test data:", dt_rmse)
+print("DT R2 on test data:", dt_r2)
 
-# # Save predictions
-# dt_predictions.repartition(1)\
-#     .select("prediction", target_col)\
-#     .write\
-#     .mode("overwrite")\
-#     .format("csv")\
-#     .option("sep", ",")\
-#     .option("header","true")\
-#     .csv("/root/IBD/output/dt_predictions.csv")
+# Save predictions
+dt_predictions.repartition(1)\
+    .select("prediction", target_col)\
+    .write\
+    .mode("overwrite")\
+    .format("csv")\
+    .option("sep", ",")\
+    .option("header","true")\
+    .csv("/root/IBD/output/dt_predictions.csv")
